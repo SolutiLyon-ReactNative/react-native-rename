@@ -226,8 +226,8 @@ function renameIosPlist(nS_NewName, newName) {
 			fs.readFile(file, 'utf8', (err, data) => {
 				if (err) return console.log(err);
 
-        const result = data.replace(CFBundleName, newName);
-        const result = result.replace(CFBundleDisplayName, newName);
+        let result = data.replace(CFBundleName, newName);
+        result = result.replace(CFBundleDisplayName, newName);
 				fs.writeFile(file, result, 'utf8', (err) => {
 					if (err) return console.log(err);
 				});
