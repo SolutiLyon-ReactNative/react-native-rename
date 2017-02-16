@@ -49,15 +49,21 @@ fs.readFile('./android/app/src/main/res/values/strings.xml', 'utf8', (err, marku
 				let commands = [
 					`mv ./ios/${nS_CurrentAppName} ios/${nS_NewName}`,
 					`mv ./ios/${nS_CurrentAppName}.xcodeproj/xcshareddata/xcschemes/${nS_CurrentAppName}.xcscheme ios/${nS_CurrentAppName}.xcodeproj/xcshareddata/xcschemes/${nS_NewName}.xcscheme`,
+          `mv ./ios/${nS_CurrentAppName}.xcodeproj/xcshareddata/xcschemes/${nS_CurrentAppName}-tvOS.xcscheme ios/${nS_CurrentAppName}.xcodeproj/xcshareddata/xcschemes/${nS_NewName}-tvOS.xcscheme`,
 					`mv ./ios/${nS_CurrentAppName}.xcodeproj ios/${nS_NewName}.xcodeproj`,
 					`mv ./ios/${nS_CurrentAppName}Tests/${nS_CurrentAppName}Tests.m ios/${nS_CurrentAppName}Tests/${nS_NewName}Tests.m`,
 					`mv ./ios/${nS_CurrentAppName}Tests ios/${nS_NewName}Tests`,
+          `mv ./ios/${nS_CurrentAppName}-tvOSTests ios/${nS_NewName}-tvOSTests`,
+          `mv ./ios/${nS_CurrentAppName}-tvOS ios/${nS_NewName}-tvOS`,
 					`mv ./android/app/src/main/java/com/${lC_Ns_CurrentAppName} android/app/src/main/java/com/${lC_Ns_NewName}`,
 					`rm -rf ./ios/${nS_CurrentAppName}`,
+          `rm -rf ./ios/${nS_CurrentAppName}.xcodeproj/xcshareddata/xcschemes/${nS_CurrentAppName}-tvOS.xcscheme`,
 					`rm -rf ./ios/${nS_CurrentAppName}.xcodeproj/xcshareddata/xcschemes/${nS_CurrentAppName}.xcscheme`,
 					`rm -rf ./ios/${nS_CurrentAppName}.xcodeproj`,
 					`rm -rf ./ios/${nS_CurrentAppName}Tests/${nS_CurrentAppName}Tests.m`,
 					`rm -rf ./ios/${nS_CurrentAppName}Tests`,
+          `rm -rf ./ios/${nS_CurrentAppName}-tvOSTests`,
+          `rm -rf ./ios/${nS_CurrentAppName}-tvOS`,
 					`rm -rf ./android/app/src/main/java/com/${lC_Ns_CurrentAppName}`,
 					`rm -rf ./ios/build`,
 					`rm -rf ./android/.gradle`,
@@ -209,7 +215,8 @@ fs.readFile('./android/app/src/main/res/values/strings.xml', 'utf8', (err, marku
 function renameIosPlist(nS_NewName, newName) {
 	fs.readFile(`./ios/${nS_NewName}/Info.plist`, 'utf8', (err, markup) => {
 		const $ = cheerio.load(markup);
-		const CFBundleName = $("key:contains('CFBundleName')").next().text();
+    const CFBundleName = $("key:contains('CFBundleName')").next().text();
+    const CFBundleDisplayName = $("key:contains('CFBundleDisplayName')").next().text();
 		const iosPlistFiles = [
 			`./ios/${nS_NewName}/Info.plist`,
 			`./ios/${nS_NewName}Tests/Info.plist`
@@ -219,7 +226,8 @@ function renameIosPlist(nS_NewName, newName) {
 			fs.readFile(file, 'utf8', (err, data) => {
 				if (err) return console.log(err);
 
-				const result = data.replace(CFBundleName, newName);
+        const result = data.replace(CFBundleName, newName);
+        const result = result.replace(CFBundleDisplayName, newName);
 				fs.writeFile(file, result, 'utf8', (err) => {
 					if (err) return console.log(err);
 				});
